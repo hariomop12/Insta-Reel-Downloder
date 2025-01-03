@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Reel Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Instagram Reel Downloader</h1>
+    <form id="reel-form">
+      <input type="text" id="url" placeholder="Enter Instagram Reel URL" required>
+      <button type="submit">Download</button>
+    </form>
+    <div id="result"></div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("reel-form").addEventListener("submit", async (e) => {
+        e.preventDefault(); // Prevent form submission
+
+        const urlInput = document.getElementById("url").value.trim();
+        const resultDiv = document.getElementById("result");
+
+        // Clear previous result
+        resultDiv.innerHTML = "Processing...";
+
+        try {
+          const response = await fetch("http://localhost:3000/download-reel", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ reelUrl: urlInput }),
+          });
+
+          if (!response.ok) {
+            resultDiv.innerHTML = `<p style="color: red;">Error: Unable to fetch reel. Status: ${response.status}</p>`;
+            return;
+          }
+
+          const data = await response.json();
+
+          if (data.file_path) {
+            resultDiv.innerHTML = `
+              <p>Reel downloaded successfully! 🎉</p>
+              <a href="${data.file_path}" download>Click here to download the file</a>
+            `;
+          } else {
+            resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error || "Unknown error occurred."}</p>`;
+          }
+        } catch (error) {
+          resultDiv.innerHTML = `<p style="color: red;">Error: Unable to process your request. Please try again later.</p>`;
+          console.error("Error fetching reel:", error);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
