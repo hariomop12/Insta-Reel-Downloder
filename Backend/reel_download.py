@@ -53,7 +53,7 @@ def fetchReelVideo(reelUrl):
         # Return JSON response
         return {
             "message": "Reel downloaded successfully!",
-            "file_path": reel_file_path
+            "file_path": reel_file_path.replace("\\", "/"),
         }
 
     except Exception as e:
@@ -63,6 +63,6 @@ if __name__ == "__main__":
     reelUrl = sys.argv[1]
     result = fetchReelVideo(reelUrl)
 
-    # Clear stdout and ensure only JSON is printed
-    sys.stdout.write(json.dumps(result))
-    sys.stdout.flush()
+    # # Clear stdout and ensure only JSON is printed
+    # sys.stdout.write(json.dumps(result))
+    # sys.stdout.flush()
