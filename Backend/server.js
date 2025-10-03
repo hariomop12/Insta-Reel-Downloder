@@ -13,7 +13,9 @@ const corsOptions = {
     'http://localhost:8000',
     'http://localhost:3000',
     'http://127.0.0.1:8000',
-    process.env.FRONTEND_URL
+    process.env.FRONTEND_URL,
+    process.env.RAILWAY_STATIC_URL,
+    process.env.RAILWAY_PUBLIC_DOMAIN
   ].filter(Boolean),
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -118,9 +120,9 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Start the server on port 3000
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+// Start the server - Railway provides PORT dynamically
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📱 Ready to download Instagram reels!`);
 });

@@ -44,9 +44,9 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Health check
+# Health check - use environment PORT or fallback to 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+  CMD node -e "const port = process.env.PORT || 3000; require('http').get(\`http://localhost:\${port}/health\`, (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
 CMD ["node", "Backend/server.js"]
