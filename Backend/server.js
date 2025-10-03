@@ -25,8 +25,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '50mb' })); // Parse JSON payloads
 
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname, '..')));
+
+// Serve the main HTML file
 app.get("/", (req, res) => {
-  res.send("Hello, World!");
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 
