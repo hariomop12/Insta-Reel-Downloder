@@ -44,7 +44,9 @@ app.post("/download-reel", (req, res) => {
     return res.status(400).json({ error: "Reel URL is required." });
   }
 
-  const pythonProcess = spawn(path.join(__dirname, "venv_linux", "bin", "python"), [
+  // Use system Python (Railway/Nixpacks provides this)
+  const pythonCommand = process.env.NODE_ENV === 'production' ? 'python3' : path.join(__dirname, "venv_linux", "bin", "python");
+  const pythonProcess = spawn(pythonCommand, [
     path.join(__dirname, "reel_download.py"),
     reelUrl,
   ]);
