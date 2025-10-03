@@ -48,5 +48,8 @@ ENV PORT=3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "const port = process.env.PORT || 3000; require('http').get(\`http://localhost:\${port}/health\`, (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
+# Expose the port that Railway expects
+EXPOSE 8000
+
 # Start the application
 CMD ["node", "Backend/server.js"]
