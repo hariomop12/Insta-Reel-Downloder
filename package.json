@@ -1,7 +1,33 @@
 {
+  "name": "insta-reel-downloder",
+  "version": "1.0.0",
+  "description": "Modern Instagram Reel Downloader with Cloud Storage",
+  "main": "Backend/server.js",
+  "scripts": {
+    "start": "node Backend/server.js",
+    "dev": "cd Backend && npm run dev",
+    "install-backend": "cd Backend && npm install",
+    "build": "npm run install-backend"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.645.0",
+    "@aws-sdk/s3-request-presigner": "^3.645.0",
+    "axios": "^1.7.9",
     "body-parser": "^1.20.3",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.2",
-    "python-shell": "^5.0.0"
+    "morgan": "^1.10.0",
+    "puppeteer": "^23.11.1",
+    "puppeteer-core": "^23.11.1",
+    "python-shell": "^5.0.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }

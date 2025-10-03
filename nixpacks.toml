@@ -1,0 +1,18 @@
+[providers]
+node = "18"
+
+[phases.setup]
+nixPkgs = ["python3", "python3Packages.pip", "curl"]
+
+[phases.install]
+cmds = [
+  "npm ci",
+  "pip3 install -r Backend/requirements.txt"
+]
+
+[phases.build]
+cmds = ["echo 'Build complete'"]
+
+[variables]
+NODE_ENV = "production"
+PORT = "8000"
