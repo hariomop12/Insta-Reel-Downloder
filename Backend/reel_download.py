@@ -63,6 +63,5 @@ if __name__ == "__main__":
     reelUrl = sys.argv[1]
     result = fetchReelVideo(reelUrl)
 
-    # # Clear stdout and ensure only JSON is printed
-    # sys.stdout.write(json.dumps(result))
-    # sys.stdout.flush()
+    # Clear stdout and ensure only JSON is printed
+    print(json.dumps(result))

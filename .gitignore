@@ -1,17 +1,50 @@
-# Logs
-logs
-*.log
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Downloaded media files (sensitive user content)
+Backend/media/
+Backend/temp/
+Backend/Backend/media/
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# Python virtual environments
+venv/
+venv_linux/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv
+
+# Dependencies
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+package-lock.json
+yarn.lock
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Logs
+logs/
+*.log
 
 # Runtime data
-pids
+pids/
 *.pid
 *.seed
 *.pid.lock
@@ -128,3 +161,64 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Python Virtual Environments
+venv/
+venv_*/
+Backend/venv/
+Backend/venv_*/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+
+# Downloaded Instagram Media
+Backend/Backend/media/
+Backend/media/
+media/
+*.mp4
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webm
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Qodo files
+.qodo/

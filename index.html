@@ -3,114 +3,391 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Instagram Reel Downloader</title>
+  <title>🔥 InstaDL - Modern Reel Downloader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #1cc216 100%);
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
     }
 
     .container {
-      max-width: 500px;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 480px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
     }
 
     h1 {
-      text-align: center;
-      color: #333;
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
+
+    .form-container {
       margin-bottom: 20px;
     }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 1.1rem;
     }
 
     input[type="text"] {
-      padding: 10px;
+      width: 100%;
+      padding: 18px 18px 18px 50px;
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: 2px solid #e1e5e9;
+      border-radius: 12px;
+      background: #f8f9fa;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
     }
 
-    button {
-      padding: 10px 20px;
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #667eea;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .download-btn {
+      width: 100%;
+      padding: 18px;
       font-size: 16px;
-      background-color: #007bff;
+      font-weight: 600;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 12px;
       cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
 
-    button:hover {
-      background-color: #0056b3;
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+    }
+
+    .download-btn.loading {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .message {
-      padding: 10px;
-      border-radius: 4px;
+      padding: 16px 20px;
+      border-radius: 12px;
       font-size: 14px;
+      font-weight: 500;
+      margin: 15px 0;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .error {
-      background-color: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
+      background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+      color: white;
+      border: none;
     }
 
     .success {
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
+      background: linear-gradient(135deg, #51cf66, #40c057);
+      color: white;
+      border: none;
     }
 
     .hidden {
       display: none;
     }
 
-    video {
-      width: 100%;
-      margin-top: 20px;
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 12px;
+      padding: 10px 16px;
+      background: rgba(255, 255, 255, 0.9);
       border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .download-link:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-container {
+      margin-top: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      background: #000;
+    }
+
+    .video-player {
+      width: 100%;
+      max-height: 600px;
+      border-radius: 12px;
+    }
+
+    .video-info {
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      text-align: center;
+    }
+
+    .video-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+
+    .download-action {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .download-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }    .features {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .feature-list {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .feature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #666;
+      font-size: 0.85rem;
+    }
+
+    .feature i {
+      font-size: 1.5rem;
+      color: #667eea;
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #999;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        border-radius: 15px;
+      }
+      
+      h1 {
+        font-size: 1.7rem;
+      }
+      
+      .feature-list {
+        flex-direction: column;
+        gap: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Instagram Reel Downloader</h1>
+    <div class="header">
+      <div class="logo">🔥</div>
+      <h1>InstaDL</h1>
+      <p class="subtitle">Download Instagram reels instantly</p>
+    </div>
 
-    <!-- Form to download the reel -->
-    <form id="download-form">
-      <input
-        type="text"
-        id="reel-url"
-        placeholder="Enter Instagram Reel URL"
-        required
-      />
-      <button type="submit">Download Reel</button>
-    </form>
+    <div class="form-container">
+      <form id="download-form">
+        <div class="input-group">
+          <i class="fab fa-instagram"></i>
+          <input
+            type="text"
+            id="reel-url"
+            placeholder="Paste Instagram reel URL here..."
+            required
+          />
+        </div>
+        <button type="submit" class="download-btn" id="download-btn">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-text">
+            <i class="fas fa-download"></i>
+            Download Reel
+          </span>
+        </button>
+      </form>
+    </div>
 
-    <!-- Error Message -->
+    <!-- Messages -->
     <div id="error-message" class="message error hidden">
       <span id="error-text"></span>
     </div>
 
-    <!-- Success Message and Video -->
-    <div id="result" class="hidden">
-      <p id="success-message" class="message success"></p>
-      <video id="download-video" controls class="hidden"></video>
+    <div id="success-message" class="message success hidden">
+      <span id="success-text"></span>
+      <div id="video-container" class="video-container hidden">
+        <video id="video-player" class="video-player" controls preload="metadata">
+          Your browser does not support the video tag.
+        </video>
+        <div class="video-info">
+          <div class="video-actions">
+            <a id="download-link" class="action-btn download-action" target="_blank">
+              <i class="fas fa-download"></i>
+              Download Video
+            </a>
+            <button id="fullscreen-btn" class="action-btn" style="background: #6c757d; color: white;">
+              <i class="fas fa-expand"></i>
+              Fullscreen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="features">
+      <div class="feature-list">
+        <div class="feature">
+          <i class="fas fa-bolt"></i>
+          <span>Lightning Fast</span>
+        </div>
+        <div class="feature">
+          <i class="fas fa-shield-alt"></i>
+          <span>Secure & Private</span>
+        </div>
+        <div class="feature">
+          <i class="fas fa-clock"></i>
+          <span>10min Expiry</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>No data stored • Links expire automatically • Privacy first</p>
     </div>
   </div>
 
@@ -118,31 +395,113 @@
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("download-form");
       const reelUrlInput = document.getElementById("reel-url");
-      const resultDiv = document.getElementById("result");
+      const downloadBtn = document.getElementById("download-btn");
+      const btnText = document.getElementById("btn-text");
+      const spinner = document.getElementById("spinner");
       const errorMessageDiv = document.getElementById("error-message");
       const errorText = document.getElementById("error-text");
-      const successMessage = document.getElementById("success-message");
-      const videoElement = document.getElementById("download-video");
+      const successMessageDiv = document.getElementById("success-message");
+      const successText = document.getElementById("success-text");
+      const downloadLink = document.getElementById("download-link");
+      const videoContainer = document.getElementById("video-container");
+      const videoPlayer = document.getElementById("video-player");
+
+      // Validation patterns
+      const instagramUrlPattern = /^https?:\/\/(www\.)?(instagram\.com|instagr\.am)\/(p|reel)\/[A-Za-z0-9_-]+\/?/;
+
+      function showError(message) {
+        errorText.textContent = message;
+        errorMessageDiv.classList.remove("hidden");
+        successMessageDiv.classList.add("hidden");
+      }
+
+      function showSuccess(message, url) {
+        successText.textContent = message;
+        
+        // Show video inline
+        if (url && videoPlayer && videoContainer) {
+          videoPlayer.src = url;
+          downloadLink.href = url;
+          
+          videoContainer.classList.remove("hidden");
+          downloadLink.classList.remove("hidden");
+          
+          // Add fullscreen functionality
+          const fullscreenBtn = document.getElementById("fullscreen-btn");
+          if (fullscreenBtn) {
+            fullscreenBtn.onclick = () => {
+              if (videoPlayer.requestFullscreen) {
+                videoPlayer.requestFullscreen();
+              } else if (videoPlayer.webkitRequestFullscreen) {
+                videoPlayer.webkitRequestFullscreen();
+              } else if (videoPlayer.msRequestFullscreen) {
+                videoPlayer.msRequestFullscreen();
+              }
+            };
+          }
+          
+          // Log when video loads
+          videoPlayer.addEventListener("loadedmetadata", () => {
+            console.log("✅ Video loaded successfully");
+          });
+        } else {
+          downloadLink.href = url;
+          downloadLink.classList.remove("hidden");
+        }
+        
+        successMessageDiv.classList.remove("hidden");
+        errorMessageDiv.classList.add("hidden");
+      }
+
+      function setLoading(loading) {
+        if (loading) {
+          downloadBtn.classList.add("loading");
+          downloadBtn.disabled = true;
+          spinner.style.display = "inline-block";
+          btnText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        } else {
+          downloadBtn.classList.remove("loading");
+          downloadBtn.disabled = false;
+          spinner.style.display = "none";
+          btnText.innerHTML = '<i class="fas fa-download"></i> Download Reel';
+        }
+      }
+
+      // URL validation on input
+      reelUrlInput.addEventListener("input", (e) => {
+        const url = e.target.value.trim();
+        if (url && !instagramUrlPattern.test(url)) {
+          e.target.style.borderColor = "#ff6b6b";
+        } else {
+          e.target.style.borderColor = "#e1e5e9";
+        }
+      });
 
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
 
         const reelUrl = reelUrlInput.value.trim();
-        console.log("Form submitted with URL:", reelUrl);
+        
+        // Clear previous messages
+        errorMessageDiv.classList.add("hidden");
+        successMessageDiv.classList.add("hidden");
+        if (videoContainer) videoContainer.classList.add("hidden");
+        if (videoPlayer) videoPlayer.src = "";
 
         if (!reelUrl) {
-          console.error("No URL entered");
-          errorMessageDiv.classList.remove("hidden");
-          errorText.textContent = "Please provide a valid URL.";
+          showError("Please paste an Instagram reel URL");
           return;
         }
 
-        try {
-          errorMessageDiv.classList.add("hidden");
-          resultDiv.classList.add("hidden");
+        if (!instagramUrlPattern.test(reelUrl)) {
+          showError("Please enter a valid Instagram reel or post URL");
+          return;
+        }
 
-          console.log("Sending POST request to backend...");
-          const response = await fetch("http://localhost:3000/download-reel", {
+        setLoading(true);
+
+        try {
+          const response = await fetch("/download-reel", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -151,23 +510,35 @@
           });
 
           const data = await response.json();
-          console.log("Response data:", data);
 
-          if (response.ok) {
-            successMessage.textContent = "Reel downloaded successfully!";
-            videoElement.src = data.file_path; // Set video source
-            videoElement.classList.remove("hidden");
-            resultDiv.classList.remove("hidden");
+          if (response.ok && data.success) {
+            showSuccess(
+              data.message || "✅ Your reel is ready for download!",
+              data.download_url
+            );
+            
+            // Clear the input
+            reelUrlInput.value = "";
+            
+            // Auto-focus for next download
+            setTimeout(() => reelUrlInput.focus(), 1000);
           } else {
-            console.error("Backend returned an error:", data.error);
-            throw new Error(data.error || "Failed to download the reel.");
+            throw new Error(data.error || "Failed to download the reel");
           }
         } catch (error) {
-          console.error("Frontend Error:", error.message);
-          errorMessageDiv.classList.remove("hidden");
-          errorText.textContent = error.message;
+          console.error("Download Error:", error);
+          showError(
+            error.message.includes("fetch") 
+              ? "❌ Connection failed. Please check if the server is running."
+              : `❌ ${error.message}`
+          );
+        } finally {
+          setLoading(false);
         }
       });
+
+      // Auto-focus on load
+      reelUrlInput.focus();
     });
   </script>
 </body>

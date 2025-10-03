@@ -3,22 +3,35 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "watch": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.645.0",
+    "@aws-sdk/s3-request-presigner": "^3.645.0",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "cheerio": "^1.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "morgan": "^1.10.0",
-    "nodemon": "^3.1.9",
     "puppeteer": "^23.11.1",
     "puppeteer-core": "^23.11.1",
     "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "nodemonConfig": {
+    "watch": ["*.js", "*.json"],
+    "ignore": ["node_modules/", "Backend/media/", "venv*/", "*.log"],
+    "ext": "js,json",
+    "delay": "2000ms"
   }
 }

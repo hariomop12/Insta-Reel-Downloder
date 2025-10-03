@@ -1,81 +1,31 @@
+require('dotenv').config();
 const express = require("express");
 const { spawn } = require("child_process");
 const path = require("path");
 const cors = require("cors");
 const morgan = require("morgan");
+const { uploadToR2 } = require('./r2Upload');
 const app = express();
-app.use(cors());
-app.use(express.json()); // Parse JSON payloads
 
-// Define the endpoint to download Instagram reels
-// app.post("/download-reel", (req, res) => {
-//   const { reelUrl } = req.body;
-//   console.log("Received POST request with reelUrl:", reelUrl); 
-//   if (!reelUrl) {
-//     return res.status(400).json({ error: "Reel URL is required." });
-//   }
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: [
+    'http://localhost:8000',
+    'http://localhost:3000',
+    'http://127.0.0.1:8000',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  credentials: true
+};
 
-//   // Path to the Python interpreter in the virtual environment
-//   const pythonPath = path.join(
-//     __dirname,
-//     "venv",
-//     "Scripts",
-//     process.platform === "win32" ? "python.exe" : "python3"
-//   );
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '50mb' })); // Parse JSON payloads
 
-//   // Spawn a new process to run the Python script
-//   const pythonProcess = spawn(pythonPath, [
-//     path.join(__dirname, "reel_download.py"), // Path to the Python script
-//     reelUrl, // Pass the Instagram reel URL
-//   ]);
-
-//   let output = "";
-//   let errorOutput = "";
-
-//   // Collect stdout data from the Python script
-//   pythonProcess.stdout.on("data", (data) => {
-//     output += data.toString();
-//   });
-
-//   // Collect stderr data from the Python script
-//   pythonProcess.stderr.on("data", (data) => {
-//     errorOutput += data.toString();
-//   });
-
-//   // Handle the completion of the Python script
-//   pythonProcess.on("close", (code) => {
-//     if (errorOutput) {
-//       console.error(`Python script error: ${errorOutput}`);
-//       return res.status(500).json({
-//         error: "Python script encountered an error.",
-//         details: errorOutput.trim(),
-//       });
-//     }
-
-//     try {
-//       // Parse the JSON output from the Python script
-//       const lines = output.trim().split("\n");
-//       const lastLine = lines[lines.length - 1]; // Use the last line as JSON
-//       console.log(`Parsed output: ${lastLine}`);
-
-//       const result = JSON.parse(lastLine);
-
-//       if (result.error) {
-//         return res.status(400).json(result); // Return Python error as response
-//       }
-
-//       // Convert Windows-style paths to URL-friendly paths
-//       const filePath = result.file_path.replace(/\\/g, "/");
-//       return res.status(200).json({
-//         file_path: `http://localhost:3000/${filePath}`,
-//       });
-//     } catch (error) {
-//       console.error(`Failed to parse output: ${output}`);
-//       console.error(`Parsing error: ${error.message}`);
-//       return res.status(500).json({ error: "Failed to parse script output." });
-//     }
-//   });
-// });
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
 
 
 app.post("/download-reel", (req, res) => {
@@ -88,7 +38,7 @@ app.post("/download-reel", (req, res) => {
     return res.status(400).json({ error: "Reel URL is required." });
   }
 
-  const pythonProcess = spawn("python", [
+  const pythonProcess = spawn(path.join(__dirname, "venv_linux", "bin", "python"), [
     path.join(__dirname, "reel_download.py"),
     reelUrl,
   ]);
@@ -106,41 +56,71 @@ app.post("/download-reel", (req, res) => {
     console.error("Python Script Error:", errorOutput); // Log Python script error
   });
 
-  pythonProcess.on("close", (code) => {
+  pythonProcess.on("close", async (code) => {
+    // Log warnings but don't treat them as errors
     if (errorOutput) {
-      console.error(`Python script exited with error: ${errorOutput}`);
-      return res.status(500).json({ error: "Python script encountered an error." });
+      console.warn(`Python script warnings: ${errorOutput}`);
     }
 
     try {
-      const result = JSON.parse(output.trim());
-      console.log("Python Script Final Output:", result); // Log final parsed result
+      // Try to parse the last line of output as JSON
+      const lines = output.trim().split("\n");
+      const lastLine = lines[lines.length - 1];
+      const result = JSON.parse(lastLine);
+      
+      console.log("Python Script Final Output:", result);
 
       if (result.error) {
         return res.status(400).json(result);
       }
 
-      const filePath = result.file_path.replace(/\\/g, "/");
+      // Upload to R2 instead of serving locally
+      // Fix path - the Python script saves to Backend/media/reels/ from app root
+      const localFilePath = path.join('/app', result.file_path);
+      const fileName = path.basename(result.file_path);
+      
+      console.log("Expected file path:", localFilePath);
+      
+      console.log("📤 Uploading to R2...");
+      const r2Url = await uploadToR2(localFilePath, fileName);
+      
       res.status(200).json({
-        file_path: `http://localhost:3000/${filePath}`,
+        success: true,
+        download_url: r2Url,
+        message: "Reel ready for download! Link expires in 10 minutes.",
+        expires_in: "10 minutes"
       });
     } catch (error) {
       console.error("Error parsing Python script output:", error.message);
+      console.error("Raw output:", output);
+      
+      // If we can't parse JSON but process exited successfully, it might still be an error
+      if (code !== 0) {
+        return res.status(500).json({ 
+          error: "Python script failed.",
+          details: errorOutput || "Unknown error"
+        });
+      }
+      
       res.status(500).json({ error: "Failed to parse script output." });
     }
   });
 });
 
-
 app.use(morgan("dev"));
 
-// Serve static files (e.g., downloaded reels) from the 'media/reels' directory
-// Serve static files from "Backend/media/reels"
-app.use('/Backend/media/reels', express.static(path.join(__dirname, 'Backend', 'media', 'reels')));
-
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    service: 'Instagram Reel Downloader'
+  });
+});
 
 // Start the server on port 3000
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`📱 Ready to download Instagram reels!`);
 });
